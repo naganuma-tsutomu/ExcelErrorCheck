@@ -6,7 +6,7 @@ Private Sub Workbook_Open()
 End Sub
 
 ' -------------------- モジュール読み込みに関する関数 --------------------
-' 設定ファイルに書いてある外部ライブラリを読み込みます。
+' 設定ファイルに書いてある外部ライブラリを読み込み
 Sub load_from_conf(conf_path)
     ' 全モジュールを削除
     clear_modules
@@ -39,17 +39,16 @@ Sub load_from_conf(conf_path)
     ThisWorkbook.Save
 End Sub
 
-' あるモジュールを外部から読み込みます。
-' パスが.で始まる場合は，相対パスと解釈されます。
+' あるモジュールを外部から読み込み
+' パスが.で始まる場合は，相対パスと解釈される
 Sub include(file_path)
     ' 絶対パスに変換
     file_path = abs_path(file_path)
-    ' 標準モジュールとして登録
-    Debug.Print (file_path)
+    ' モジュールとして登録
     ThisWorkbook.VBProject.VBComponents.Import file_path
 End Sub
 
-' 全モジュールを初期化します。
+' 全モジュールを初期化
 Private Sub clear_modules()
     For Each component In ThisWorkbook.VBProject.VBComponents
         If component.Type = 1 Or component.Type = 2 Or component.Type = 3 Then
@@ -59,7 +58,7 @@ Private Sub clear_modules()
     Next component
 End Sub
 
-' ファイルパスを絶対パスに変換します。
+' ファイルパスを絶対パスに変換
 Function abs_path(file_path)
     ' 絶対パスに変換
     If Left(file_path, 1) = "." Then

@@ -40,7 +40,7 @@ End Sub
 ' 計画ファイルと記録ファイルとの差異をチェックする
 Sub CheckDiffFunction()
     If (OutputForm.Visible = True) Then Unload OutputForm
-    If bookName = "" Then Call varDeclaration
+    If openingSheet = "" Then Call varDeclaration
     Dim CheckDiff As New CheckDiffClass    ' クラスをインスタンス化
     ' 対象とするファイル・検索値を取得する
     With CheckDiff
