@@ -1,68 +1,77 @@
 
-' ãƒ¯ãƒ¼ã‚¯ãƒ–ãƒƒã‚¯ã‚’é–‹ãæ™‚ã®ã‚¤ãƒ™ãƒ³ãƒˆ
+' ƒ[ƒNƒuƒbƒN‚ğŠJ‚­‚ÌƒCƒxƒ“ƒg
 Private Sub Workbook_Open()
-    ' txtã«æ›¸ã„ã¦ã‚ã‚‹å¤–éƒ¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’èª­ã¿è¾¼ã¿
-    load_from_conf ".\..\..\ã‚·ã‚¹ãƒ†ãƒ è¨­å®š\libdef.txt"
+    ' txt‚É‘‚¢‚Ä‚ ‚éŠO•”ƒ‰ƒCƒuƒ‰ƒŠ‚ğ“Ç‚İ‚İ
+    load_from_conf ".\..\..\ƒVƒXƒeƒ€İ’è\libdef.txt"
 End Sub
 
-' -------------------- ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«èª­ã¿è¾¼ã¿ã«é–¢ã™ã‚‹é–¢æ•° --------------------
-' è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ã„ã¦ã‚ã‚‹å¤–éƒ¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’èª­ã¿è¾¼ã¿
+' -------------------- ƒ‚ƒWƒ…[ƒ‹“Ç‚İ‚İ‚ÉŠÖ‚·‚éŠÖ” --------------------
+' İ’èƒtƒ@ƒCƒ‹‚É‘‚¢‚Ä‚ ‚éŠO•”ƒ‰ƒCƒuƒ‰ƒŠ‚ğ“Ç‚İ‚İ
 Sub load_from_conf(conf_path)
-    ' å…¨ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚’å‰Šé™¤
+    ' ‘Sƒ‚ƒWƒ…[ƒ‹‚ğíœ
     clear_modules
-    ' çµ¶å¯¾ãƒ‘ã‚¹ã«å¤‰æ›
+    ' â‘ÎƒpƒX‚É•ÏŠ·
     conf_path = abs_path(conf_path)
     If Dir(conf_path) = "" Then
-        MsgBox "å¤–éƒ¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªå®šç¾©" & conf_path & "ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚"
+        MsgBox "ŠO•”ƒ‰ƒCƒuƒ‰ƒŠ’è‹`" & conf_path & "‚ª‘¶İ‚µ‚Ü‚¹‚ñB"
         Exit Sub
     End If
 
-    ' èª­ã¿å–ã‚Š
+    ' “Ç‚İæ‚è
     fp = FreeFile
     Open conf_path For Input As #fp
     Do Until EOF(fp)
-        ' ï¼‘è¡Œãšã¤
+        ' ‚Ps‚¸‚Â
         Line Input #fp, temp_str
         If Not Left(temp_str, 1) = "'" And Len(temp_str) > 0 Then
             module_path = abs_path(temp_str)
             If Dir(module_path) = "" Then
-                ' ã‚¨ãƒ©ãƒ¼
-                MsgBox "ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«" & module_path & "ã¯å­˜åœ¨ã—ã¾ã›ã‚“ã€‚"
+                ' ƒGƒ‰[
+                MsgBox "ƒ‚ƒWƒ…[ƒ‹" & module_path & "‚Í‘¶İ‚µ‚Ü‚¹‚ñB"
                 Exit Do
             Else
-                ' ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã¨ã—ã¦å–ã‚Šè¾¼ã¿
+                ' ƒ‚ƒWƒ…[ƒ‹‚Æ‚µ‚Äæ‚è‚İ
                 include module_path
             End If
         End If
     Loop
     Close #fp
-    ThisWorkbook.Save
+    ' ThisWorkbook.Save
+    Reload_module_shortcut
 End Sub
 
-' ã‚ã‚‹ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚’å¤–éƒ¨ã‹ã‚‰èª­ã¿è¾¼ã¿
-' ãƒ‘ã‚¹ãŒ.ã§å§‹ã¾ã‚‹å ´åˆã¯ï¼Œç›¸å¯¾ãƒ‘ã‚¹ã¨è§£é‡ˆã•ã‚Œã‚‹
+' ‚ ‚éƒ‚ƒWƒ…[ƒ‹‚ğŠO•”‚©‚ç“Ç‚İ‚İ
+' ƒpƒX‚ª.‚Ån‚Ü‚éê‡‚ÍC‘Š‘ÎƒpƒX‚Æ‰ğß‚³‚ê‚é
 Sub include(file_path)
-    ' çµ¶å¯¾ãƒ‘ã‚¹ã«å¤‰æ›
+    ' â‘ÎƒpƒX‚É•ÏŠ·
     file_path = abs_path(file_path)
-    ' ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã¨ã—ã¦ç™»éŒ²
+    ' ƒ‚ƒWƒ…[ƒ‹‚Æ‚µ‚Ä“o˜^
     ThisWorkbook.VBProject.VBComponents.Import file_path
 End Sub
 
-' å…¨ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚’åˆæœŸåŒ–
+' ‘Sƒ‚ƒWƒ…[ƒ‹‚ğ‰Šú‰»
 Private Sub clear_modules()
     For Each component In ThisWorkbook.VBProject.VBComponents
         If component.Type = 1 Or component.Type = 2 Or component.Type = 3 Then
-            ' ã“ã®æ¨™æº–ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚’å‰Šé™¤
+            ' ‚±‚Ì•W€ƒ‚ƒWƒ…[ƒ‹‚ğíœ
             ThisWorkbook.VBProject.VBComponents.Remove component
         End If
     Next component
 End Sub
 
-' ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‚’çµ¶å¯¾ãƒ‘ã‚¹ã«å¤‰æ›
+' ƒtƒ@ƒCƒ‹ƒpƒX‚ğâ‘ÎƒpƒX‚É•ÏŠ·
 Function abs_path(file_path)
-    ' çµ¶å¯¾ãƒ‘ã‚¹ã«å¤‰æ›
+    ' â‘ÎƒpƒX‚É•ÏŠ·
     If Left(file_path, 1) = "." Then
         file_path = ThisWorkbook.Path & Mid(file_path, 2, Len(file_path) - 1)
     End If
     abs_path = file_path
 End Function
+
+Private Sub Reload_module_shortcut()
+    For Each component In ThisWorkbook.VBProject.VBComponents
+        If InStr(component.Name, "Reload") <> 0 Then
+            Application.MacroOptions Macro:=component.Name & ".Reload_module", ShortcutKey:="R"
+        End If
+    Next component
+End Sub

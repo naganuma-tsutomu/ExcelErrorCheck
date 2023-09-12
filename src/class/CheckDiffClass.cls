@@ -47,9 +47,11 @@ End Function
 Public Function initSheet(sheetName As String) As CheckDiffClass
     Set initSheet = Me
     Set inspectWs = Nothing ' Nothingを代入しておく
-    On Error Resume Next
+    On Error GoTo myError
     Set inspectWs = inspectWb.Worksheets(sheetName) ' 検査計画ファイルの最初のワークシートを指定する
-    On Error GoTo 0
+    Exit Function
+myError:
+    OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & sheetName & "シートが周期表ファイル内で見つかりませんでした。" & vbCrLf
 End Function
 
 ' 検査計画ファイルのワークシート(開放実績)の設定
@@ -71,15 +73,15 @@ Private Function searchCellsCheck(Cell As String) As String
     searchCellsCheck = thisWs.Range(Cell).Value
     If searchCellsCheck = "" Then
         Dim searchTitle As String: searchTitle = Range(Cell).Offset(0, -1).Value
-        MsgBox "入力欄に" & searchTitle & "を入力してください。"
+        MsgBox "入力欄に" & searchTitle & "を入力してください。", vbExclamation
     End If
 End Function
 
 ' 対象ブックを開く
 Private Function targetWorkbook(devName As String, directory As Long) As Workbook
-    If isBookOpen(devName & "_周期表.xlsx") = True Then
+    If isBookOpen(devName & "_高圧ガス周期表.xlsx") = True Then
         isWbOpen = True                          ' 検査計画ファイルを開いているフラグを立てる
-        Set targetWorkbook = Workbooks(devName & "_周期表.xlsx") ' 検査計画ファイルを変数へ
+        Set targetWorkbook = Workbooks(devName & "_高圧ガス周期表.xlsx") ' 検査計画ファイルを変数へ
     Else
         ' 階層ごとに参照するパスの変更
         Dim pathSub As String
@@ -118,15 +120,15 @@ Function FileSearch(Path As String)
                             Exit Function
                         End If
                     Next File
-                    MsgBox "周期表ファイルが見つかりませんでした。機器名称を確認してもう一度お試し下さい。"
+                    MsgBox "周期表ファイルが見つかりませんでした。機器名称を確認してもう一度お試し下さい。", vbExclamation
                     Exit Function
                 End If
             Next subFolder
-            MsgBox "周期表フォルダが見つかりませんでした。ファルダ構成を確認してもう一度お試し下さい。"
+            MsgBox "周期表フォルダが見つかりませんでした。ファルダ構成を確認してもう一度お試し下さい。", vbExclamation
             Exit Function
         End If
     Next Folder
-    MsgBox "周期表フォルダが見つかりませんでした。ファルダ構成を確認してもう一度お試し下さい。"
+    MsgBox "周期表フォルダが見つかりませんでした。ファルダ構成を確認してもう一度お試し下さい。", vbExclamation
 End Function
 
 ' ブックが開かれているか確認
