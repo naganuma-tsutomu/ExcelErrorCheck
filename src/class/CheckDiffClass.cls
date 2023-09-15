@@ -1,13 +1,3 @@
-VERSION 1.0 CLASS
-BEGIN
-  MultiUse = -1  'True
-END
-Attribute VB_Name = "CheckDiffClass"
-Attribute VB_GlobalNameSpace = False
-Attribute VB_Creatable = False
-Attribute VB_PredeclaredId = False
-Attribute VB_Exposed = False
-
 Private isWbOpen As Boolean
 Private thisWb As Workbook
 Private thisWs As Worksheet
@@ -47,11 +37,9 @@ End Function
 Public Function initSheet(sheetName As String) As CheckDiffClass
     Set initSheet = Me
     Set inspectWs = Nothing ' Nothingを代入しておく
-    On Error GoTo myError
+    On Error Resume Next
     Set inspectWs = inspectWb.Worksheets(sheetName) ' 検査計画ファイルの最初のワークシートを指定する
-    Exit Function
-myError:
-    OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & sheetName & "シートが周期表ファイル内で見つかりませんでした。" & vbCrLf
+    On Error GoTo 0
 End Function
 
 ' 検査計画ファイルのワークシート(開放実績)の設定
@@ -79,9 +67,10 @@ End Function
 
 ' 対象ブックを開く
 Private Function targetWorkbook(devName As String, directory As Long) As Workbook
-    If isBookOpen(devName & "_高圧ガス周期表.xlsx") = True Then
+    Dim fileName As String: fileName = devName & "_高圧ガス周期表.xlsx"
+    If isBookOpen(fileName) = True Then
         isWbOpen = True                          ' 検査計画ファイルを開いているフラグを立てる
-        Set targetWorkbook = Workbooks(devName & "_高圧ガス周期表.xlsx") ' 検査計画ファイルを変数へ
+        Set targetWorkbook = Workbooks(fileName) ' 検査計画ファイルを変数へ
     Else
         ' 階層ごとに参照するパスの変更
         Dim pathSub As String
@@ -93,12 +82,18 @@ Private Function targetWorkbook(devName As String, directory As Long) As Workboo
             pathSub = "/"
         End If
 
-        ' ファイル階層(修正必要)
-        Dim Path As String: Path = ThisWorkbook.Path & pathSub
-        Dim wbPath As String: wbPath = FileSearch(Path)
+        Dim cut As String: cut = "/"
+        If InStr(ThisWorkbook.Path, "\") <> 0 Then
+            cut = "\"
+        End If
+
+        ' Dim wbPath As String: wbPath = FileSearch(Path)
+        Dim wbFolder As String: wbFolder = Mid(ThisWorkbook.Path, InStrRev(ThisWorkbook.Path, cut) + 1)
+        Dim wbPath As String: wbPath = "[静機器]高圧ガス周期表" & cut & wbFolder & cut
+        Dim Path As String: Path = ThisWorkbook.Path & pathSub & wbPath & fileName
 
         If wbPath <> "" Then
-            Set targetWorkbook = Workbooks.Open(Filename:=wbPath, UpdateLinks:=False, ReadOnly:=True) ' 検査計画ファイルを開く
+            Set targetWorkbook = Workbooks.Open(fileName:=Path, UpdateLinks:=False, ReadOnly:=True) ' 検査計画ファイルを開く
             'ActiveWindow.Visible = False         ' 検査計画ファイルを非表示
             Exit Function
         End If
@@ -219,7 +214,7 @@ Private Function findRows(ws As Worksheet, order As String, searchDevValue As St
         If order = "first" Then
             ' 最初の行番号を検索
             For i = 1 To .Cells(Rows.count, column).End(xlUp).Row
-                If .Cells(i, column).Value = searchDevValue Then
+                If InStr(.Cells(i, column).Value, searchDevValue) > 0 Then
                     findRows = i
                     Exit For
                 End If
@@ -227,7 +222,7 @@ Private Function findRows(ws As Worksheet, order As String, searchDevValue As St
         ElseIf order = "last" Then
             ' 最後の行番号を検索
             For i = .Cells(Rows.count, column).End(xlUp).Row To 1 Step -1
-                If .Cells(i, column).Value = searchDevValue Then
+                If InStr(.Cells(i, column).Value, searchDevValue) > 0 Then
                     findRows = i
                     Exit For
                 End If
@@ -482,7 +477,7 @@ End Function
 ' マーカーに対応したチェックボックスがチェックされているか確認する
 Private Sub checkMarkerChecked(TargetCell As Range, moveCol As Long, marker As Boolean, i As Long)
     Dim checkCell As Range: Set checkCell = TargetCell.Offset(1, moveCol).Offset(-8, 0)  ' 有のチェックボックス
-    Dim bgColor As Long: bgColor = checkCell.Offset(1, 0).Interior.Color
+    Dim bgColor As Long: bgColor = TargetCell.End(xlToLeft).Interior.Color
     Dim cellMove As Long
     cellMove = IIf(marker = True, -4, 4)
     If checkCell.Value = ChrW(111) Then ' チェックされていない場合
@@ -498,7 +493,18 @@ End Sub
 
 ' 配列になったセルを塗る
 Public Sub fillDiffCells(Color As Long)
-    thisWs.Range(thisWs.Columns(devicesColumn), thisWs.Columns(devicesColumn + 1)).Interior.ColorIndex = 0 ' 全ての背景色を消す
+    
+    Dim t As Long, titleColor As Long
+    With thisWs
+        For j = devicesColumn To devicesColumn + 1
+            For t = 1 To .Cells(Rows.count, j).End(xlUp).Row
+                titleColor = .Cells(t, j).End(xlToLeft).Interior.Color
+                If .Cells(t, j).Interior.Color <> titleColor Then
+                    .Cells(t, j).Interior.Color = titleColor
+                End If
+            Next t
+        Next j
+    End With
     If Not Not cellArray Then
         Dim i As Long
         ' エラーセルを指定の色に塗りつぶす
@@ -509,5 +515,4 @@ Public Sub fillDiffCells(Color As Long)
         Next i
     End If
 End Sub
-
 

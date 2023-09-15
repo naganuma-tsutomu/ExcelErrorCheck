@@ -47,33 +47,44 @@ Sub CheckDiffFunction()
         Call .initBook(directoryLevel, searchDevCell, searchYearCell, searchDevMasterCol)
         ' ファイルが存在すればチェックを行う
         If Not .inspectWb Is Nothing And .searchYearValue <> "" And .searchDevValue <> "" Then
-            ' -------------------------------- 検査対象1 (開放実績)
-            ' 対象とするシートを指定する
-            Call .initSheet(openingSheet)
-            If Not .inspectWs Is Nothing And InStr(ThisWorkbook.ActiveSheet.Name, "共有") = 0 Then ' シートが存在すれば
-                ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
-                Call .CheckInspection(openingHeadRow, openingDevGroupCol, openingDevNumCol, openingDevNameCol)
-            End If
-            ' -------------------------------- 検査対象2 (肉厚測定)
-            ' 対象とするシートを指定する
-            Call .initSheet(thicknessSheet)
-            If Not .inspectWs Is Nothing And InStr(ThisWorkbook.ActiveSheet.Name, "共有") = 0 Then ' シートが存在すれば
-                ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
-                Call .CheckInspection(thicknessHeadRow, thicknessDevGroupCol, thicknessDevNumCol, thicknessDevNameCol)
-            End If
-            ' -------------------------------- 検査対象3 (配管)
-            ' 対象とするシートを指定する
-            Call .initSheet(pipingSheet)
-            If Not .inspectWs Is Nothing And InStr(ThisWorkbook.ActiveSheet.Name, "共有") = 0 Then ' シートが存在すれば
-                ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
-                Call .CheckInspectionPiping(pipingHeadRow, thicknessDevGroupCol, pipingDevNum, pipingDevNameCol)
-            End If
-            ' -------------------------------- 検査対象4 (共有配管)
-            ' 対象とするシートを指定する
-            Call .initSheet(sharePipingSheet)
-            If Not .inspectWs Is Nothing And InStr(ThisWorkbook.ActiveSheet.Name, "共有") > 0 Then ' シートが存在すれば
-                ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
-                Call .CheckInspectionPiping(sharePipingHeadRow, thicknessDevGroupCol, sharePipingDevNum, sharePipingDevNameCol)
+            If InStr(ThisWorkbook.ActiveSheet.Name, "共有") = 0 Then
+                ' -------------------------------- 検査対象1 (開放実績)
+                ' 対象とするシートを指定する
+                Call .initSheet(openingSheet)
+                If Not .inspectWs Is Nothing Then ' シートが存在すれば
+                    ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
+                    Call .CheckInspection(openingHeadRow, openingDevGroupCol, openingDevNumCol, openingDevNameCol)
+                Else
+                    OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & sharePipingSheet & "シートが周期表ファイル内で見つかりませんでした。" & vbCrLf
+                End If
+                ' -------------------------------- 検査対象2 (肉厚測定)
+                ' 対象とするシートを指定する
+                Call .initSheet(thicknessSheet)
+                If Not .inspectWs Is Nothing Then' シートが存在すれば
+                    ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
+                    Call .CheckInspection(thicknessHeadRow, thicknessDevGroupCol, thicknessDevNumCol, thicknessDevNameCol)
+                Else
+                    OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & sharePipingSheet & "シートが周期表ファイル内で見つかりませんでした。" & vbCrLf
+                End If
+                ' -------------------------------- 検査対象3 (配管)
+                ' 対象とするシートを指定する
+                Call .initSheet(pipingSheet)
+                If Not .inspectWs Is Nothing Then' シートが存在すれば
+                    ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
+                    Call .CheckInspectionPiping(pipingHeadRow, thicknessDevGroupCol, pipingDevNum, pipingDevNameCol)
+                Else
+                    OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & sharePipingSheet & "シートが周期表ファイル内で見つかりませんでした。" & vbCrLf
+                End If
+            Else
+                ' -------------------------------- 検査対象4 (共有配管)
+                ' 対象とするシートを指定する
+                Call .initSheet(sharePipingSheet)
+                If Not .inspectWs Is Nothing Then' シートが存在すれば
+                    ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
+                    Call .CheckInspectionPiping(sharePipingHeadRow, thicknessDevGroupCol, sharePipingDevNum, sharePipingDevNameCol)
+                Else
+                    OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & sharePipingSheet & "シートが周期表ファイル内で見つかりませんでした。" & vbCrLf
+                End If
             End If
             ' エラー箇所に色付けする
             Call .fillDiffCells(6723891)
