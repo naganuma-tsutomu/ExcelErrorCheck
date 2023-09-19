@@ -25,5 +25,9 @@ Private Sub UserForm_Initialize()
     Me.StartUpPosition = 0
     Me.Top = Application.Top + ((Application.Height - Me.Height) / 2)
     Me.Left = Application.Left + ((Application.Width - Me.Width) / 2)
+    With ErrorTextBox
+        .SetFocus
+        .SelStart = 0
+        .SelLength = 0
+    End With
 End Sub
-
