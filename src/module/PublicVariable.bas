@@ -27,3 +27,8 @@ Public sharePipingSheet As String
 Public sharePipingHeadRow As Long
 Public sharePipingDevNum As String
 Public sharePipingDevNameCol As String
+    ' ----------NC—p----------
+Public sharePiping5 As String
+Public sharePiping5Sheet As String
+Public sharePiping10 As String
+Public sharePiping10Sheet As String

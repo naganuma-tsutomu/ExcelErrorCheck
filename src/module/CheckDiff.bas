@@ -27,6 +27,11 @@ Sub varDeclaration()
     sharePipingHeadRow = 4                        ' フィルターの基準となっている行を入力
     sharePipingDevNum = "配管"                      ' 配管用の機器番号
     sharePipingDevNameCol = "B"                    ' 機器名称の列記号を入力
+    ' ----------NC用----------
+    sharePiping5 = "5条"
+    sharePiping5Sheet = "共有配管（5条）"
+    sharePiping10 = "10条"
+    sharePiping10Sheet = "共有配管（10条）"
     ' ----------記録ファイル用----------
     searchDevCell = "BF4"                         ' 装置名の入力セルを入力
     searchYearCell = "BF6"                        ' 検査年度の入力セルを入力
@@ -47,7 +52,7 @@ Sub CheckDiffFunction()
         Call .initBook(directoryLevel, searchDevCell, searchYearCell, searchDevMasterCol)
         ' ファイルが存在すればチェックを行う
         If Not .inspectWb Is Nothing And .searchYearValue <> "" And .searchDevValue <> "" Then
-            If InStr(ThisWorkbook.ActiveSheet.Name, "共有") = 0 Then
+            If InStr(ThisWorkbook.ActiveSheet.Name, sharePipingSheet) = 0 Then
                 ' -------------------------------- 検査対象1 (開放実績)
                 ' 対象とするシートを指定する
                 Call .initSheet(openingSheet)
@@ -72,6 +77,24 @@ Sub CheckDiffFunction()
                 If Not .inspectWs Is Nothing Then' シートが存在すれば
                     ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
                     Call .CheckInspectionPiping(pipingHeadRow, thicknessDevGroupCol, pipingDevNum, pipingDevNameCol)
+                Else
+                    OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & sharePipingSheet & "シートが周期表ファイル内で見つかりませんでした。" & vbCrLf
+                End If
+            ElseIf  InStr(ThisWorkbook.ActiveSheet.Name, sharePiping5) <> 0 Then 'NC装置 共有配管5条
+                ' 対象とするシートを指定する
+                Call .initSheet(sharePiping5Sheet)
+                If Not .inspectWs Is Nothing Then' シートが存在すれば
+                    ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
+                    Call .CheckInspectionPiping(sharePipingHeadRow, thicknessDevGroupCol, sharePipingDevNum, sharePipingDevNameCol)
+                Else
+                    OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & sharePipingSheet & "シートが周期表ファイル内で見つかりませんでした。" & vbCrLf
+                End If
+            ElseIf  InStr(ThisWorkbook.ActiveSheet.Name, sharePiping10) <> 0 Then 'NC装置 共有配管10条
+                ' 対象とするシートを指定する
+                Call .initSheet(sharePiping10Sheet)
+                If Not .inspectWs Is Nothing Then' シートが存在すれば
+                    ' 計画ファイルからデータを検索し、記録ファイルとの差異をチェックする
+                    Call .CheckInspectionPiping(sharePipingHeadRow, thicknessDevGroupCol, sharePipingDevNum, sharePipingDevNameCol)
                 Else
                     OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & sharePipingSheet & "シートが周期表ファイル内で見つかりませんでした。" & vbCrLf
                 End If
