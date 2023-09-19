@@ -1,3 +1,13 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "CheckDiffClass"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+
 Private isWbOpen As Boolean
 Private thisWb As Workbook
 Private thisWs As Worksheet
@@ -87,16 +97,16 @@ Private Function targetWorkbook(devName As String, directory As Long) As Workboo
             cut = "\"
         End If
 
-        ' Dim wbPath As String: wbPath = FileSearch(Path)
         Dim wbFolder As String: wbFolder = Mid(ThisWorkbook.Path, InStrRev(ThisWorkbook.Path, cut) + 1)
         Dim wbPath As String: wbPath = "[静機器]高圧ガス周期表" & cut & wbFolder & cut
         Dim Path As String: Path = ThisWorkbook.Path & pathSub & wbPath & fileName
 
-        If wbPath <> "" Then
+        On Error GoTo Error
             Set targetWorkbook = Workbooks.Open(fileName:=Path, UpdateLinks:=False, ReadOnly:=True) ' 検査計画ファイルを開く
             'ActiveWindow.Visible = False         ' 検査計画ファイルを非表示
             Exit Function
-        End If
+        Error:
+            MsgBox fileName & "が見つかりませんでした。" & vbCrLf &"装置名を確認してください。", vbExclamation
     End If
 End Function
 
