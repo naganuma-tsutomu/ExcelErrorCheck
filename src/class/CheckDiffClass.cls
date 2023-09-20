@@ -71,7 +71,7 @@ Private Function searchCellsCheck(Cell As String) As String
     searchCellsCheck = thisWs.Range(Cell).Value
     If searchCellsCheck = "" Then
         Dim searchTitle As String: searchTitle = Range(Cell).Offset(0, -1).Value
-        MsgBox "入力欄に" & searchTitle & "を入力してください。", vbExclamation
+        MsgBox "入力フォームに" & searchTitle & "を入力してください。", vbExclamation
     End If
 End Function
 
@@ -341,6 +341,24 @@ Private Sub FindMatchingDev(devNumCol As String, devNameCol As String, yearColum
                         Exit For
                     End If
                 Next j
+            ElseIf InStr(.Name, sharePipingSheet) <> 0 And NumValue = pipingDevNum Then ' 共有配管を含むシートかつ機器番号が配管の場合
+                ' 対象の最初の行から最後の行まで検索をし、機器番号・機器名称をチェックする (配管)
+                For j = firstRow To lastRow
+                    devName = .Cells(j, devNameCol).Value ' 現在の行の機器名称の取得
+                    If NameValue = devName Then  ' 機器名称が一致した場合
+                        Set planMarkerCell = .Cells(j, yearColumn) ' 検索年度のマーカーのセルを取得
+                            Call checkPlanMarker(planMarkerCell, TargetCell, j)
+                            Exit For
+                    ElseIf j = lastRow Then
+                        ' エラーセルの配列に格納
+                        ReDim Preserve cellArray(arrCount)
+                        Set cellArray(arrCount) = TargetCell.Offset(0, 1)
+                        arrCount = arrCount + 1
+                        ' メッセージ変数に追加
+                            message = message & "番号:" & TargetCell.End(xlToLeft).Value & " - " & .Name & "にて配管区分: " & NameValue & " が見つかりませんでした。" & vbCrLf
+                        Exit For
+                    End If
+                Next j
             ElseIf InStr(.Name, pipingSheet) <> 0 And NumValue = pipingDevNum Then ' 配管を含むシートかつ機器番号が配管の場合
                 ' 対象の最初の行から最後の行まで検索をし、機器番号・機器名称をチェックする (配管)
                 For j = firstRow To lastRow
@@ -405,7 +423,7 @@ Private Sub FindMatchingDev(devNumCol As String, devNameCol As String, yearColum
         Next i
     End With
     ' エラーメッセージ
-    If message <> "" Then OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text + message
+    If message <> "" Then OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text + Replace(message, vbLf, "")
 End Sub
 
 ' 指定したマーカーが含まれるかをチェック
@@ -493,7 +511,8 @@ Private Sub checkMarkerChecked(TargetCell As Range, moveCol As Long, marker As B
     If checkCell.Value = ChrW(111) Then ' チェックされていない場合
         Range(checkCell, checkCell.Offset(0, 2)).Interior.Color = 6723891
         Range(checkCell.Offset(0, cellMove), checkCell.Offset(0, cellMove + 2)).Interior.Color = bgColor
-        OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & "番号:" & TargetCell.End(xlToLeft).Value & " " & TargetCell.Value & " - " & TargetCell.Offset(0, 1).Value & " でエラーがあります。" & vbCrLf
+        Dim msg As String : msg = "番号:" & TargetCell.End(xlToLeft).Value & " " & TargetCell.Value & " - " & TargetCell.Offset(0, 1).Value & " でエラーがあります。"
+        OutputForm.ErrorTextBox.Text = OutputForm.ErrorTextBox.Text & Replace(msg, vbLf, "") & vbCrLf
     Else ' チェックされている場合
         Range(checkCell, checkCell.Offset(0, 2)).Interior.Color = bgColor
         Range(checkCell.Offset(0, cellMove), checkCell.Offset(0, cellMove + 2)).Interior.Color = bgColor
