@@ -439,7 +439,7 @@ Private Sub checkPlanMarker(markerCell As Range, TargetCell As Range, index As L
             Else
                 Call checkMarkerChecked(TargetCell, 12, False, index)
             End If
-        ElseIf inspectWs.Name = pipingSheet Or inspectWs.Name = sharePipingSheet Then
+        ElseIf InStr(inspectWs.Name, pipingSheet) > 0 Then
             '配管・共有配管の場合
             If InStr(marker, "●") > 0 Then
                 Call checkMarkerChecked(TargetCell, 7, True, index)
