@@ -110,32 +110,6 @@ Private Function targetWorkbook(devName As String, directory As Long) As Workboo
     End If
 End Function
 
-Function FileSearch(Path As String)
-    Dim FSO As Object, Folder As Variant, subFolder As Variant, File As Variant
-    Set FSO = CreateObject("Scripting.FileSystemObject")
-    For Each Folder In FSO.GetFolder(Path).SubFolders
-        If Folder.Name Like "*周期表*" Then
-        Dim wbFolder As String: wbFolder = Mid(ThisWorkbook.Path, InStrRev(ThisWorkbook.Path, "\") + 1)
-            For Each subFolder In FSO.GetFolder(Folder.Path).SubFolders
-                If subFolder.Name Like wbFolder Then
-                    Dim filePath As String
-                    For Each File In FSO.GetFolder(subFolder.Path).Files
-                        If File.Name Like searchDevValue & "*" Then
-                            FileSearch = File.Path
-                            Exit Function
-                        End If
-                    Next File
-                    MsgBox "周期表ファイルが見つかりませんでした。機器名称を確認してもう一度お試し下さい。", vbExclamation
-                    Exit Function
-                End If
-            Next subFolder
-            MsgBox "周期表フォルダが見つかりませんでした。ファルダ構成を確認してもう一度お試し下さい。", vbExclamation
-            Exit Function
-        End If
-    Next Folder
-    MsgBox "周期表フォルダが見つかりませんでした。ファルダ構成を確認してもう一度お試し下さい。", vbExclamation
-End Function
-
 ' ブックが開かれているか確認
 Private Function isBookOpen(bookName) As Boolean
     Dim wb As Workbook
