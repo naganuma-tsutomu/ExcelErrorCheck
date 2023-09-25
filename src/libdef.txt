@@ -1,13 +1,13 @@
 ' Module
-.\..\..\システム設定\Module\CheckDiff.bas
-.\..\..\システム設定\Module\ClickCheckbox.bas
-.\..\..\システム設定\Module\InputFormFunc.bas
-.\..\..\システム設定\Module\PublicVariable.bas
-.\..\..\システム設定\Module\Reload.bas
+.\..\..\src\Module\CheckDiff.bas
+.\..\..\src\Module\ClickCheckbox.bas
+.\..\..\src\Module\InputFormFunc.bas
+.\..\..\src\Module\PublicVariable.bas
+.\..\..\src\Module\Reload.bas
 
 ' Class
-.\..\..\システム設定\Class\CheckDiffClass.cls
+.\..\..\src\Class\CheckDiffClass.cls
 
 ' Form
-.\..\..\システム設定\Form\InputForm.frm
-.\..\..\システム設定\Form\OutputForm.frm
+.\..\..\src\Form\InputForm.frm
+.\..\..\src\Form\OutputForm.frm

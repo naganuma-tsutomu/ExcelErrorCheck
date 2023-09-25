@@ -2,7 +2,7 @@
 ' ワークブックを開く時のイベント
 Private Sub Workbook_Open()
     ' txtに書いてある外部ライブラリを読み込み
-    load_from_conf ".\..\..\システム設定\libdef.txt"
+    load_from_conf ".\..\..\src\libdef.txt"
 End Sub
 
 ' -------------------- モジュール読み込みに関する関数 --------------------

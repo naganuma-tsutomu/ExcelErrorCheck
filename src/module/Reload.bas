@@ -2,7 +2,7 @@ Attribute VB_Name = "Reload"
 
 Sub Reload_module()
     Reload_module_shortcut_delete
-    ThisWorkbook.load_from_conf ".\..\..\ÉVÉXÉeÉÄê›íË\libdef.txt"
+    ThisWorkbook.load_from_conf ".\..\..\src\libdef.txt"
 End Sub
 
 Private Sub Reload_module_shortcut_delete()
